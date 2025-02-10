@@ -1,5 +1,5 @@
 
-const GITHUB_TOKEN = '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';
+const GITHUB_TOKEN = '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';
 
 // Function to fetch the README file from GitHub
 async function fetchReadme() {
