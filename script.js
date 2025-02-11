@@ -1,5 +1,16 @@
-
-const GITHUB_TOKEN = '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';
+async function fetchGithubToken() {
+    try {
+        const response = await fetch("http://localhost:5000/token");
+        if (!response.ok) {
+            throw new Error(`Failed to fetch token: ${response.status}`);
+        }
+        const data = await response.json();
+        return data.token; // Assuming backend returns { "token": "your_token_here" }
+    } catch (error) {
+        console.error("Error fetching GitHub token:", error);
+        return null;
+    }
+}
 
 // Function to fetch the README file from GitHub
 async function fetchReadme() {
@@ -52,6 +63,7 @@ function extractLeetCodeData(readmeText, query) {
 // Function to fetch the list of files in a problem's folder
 async function fetchFolderFiles(language, folderName) {
     const folderUrl = `https://api.github.com/repos/haoel/leetcode/contents/algorithms/${language}/${folderName}`;
+    const GITHUB_TOKEN = await fetchGithubToken();
 
     try {
         const response = await fetch(folderUrl, {
@@ -76,7 +88,7 @@ async function fetchFolderFiles(language, folderName) {
 async function fetchSolutionFile(language, folderName) {
     const fileName = `${folderName}.${language}`;
     const fileUrl = `https://api.github.com/repos/haoel/leetcode/contents/algorithms/${language}/${folderName}/${fileName}`;
-
+    const GITHUB_TOKEN = await fetchGithubToken();
     try {
         const response = await fetch(fileUrl, {
             headers: {
@@ -103,10 +115,10 @@ async function fetchSolutionFile(language, folderName) {
     return `No solution file found for ${folderName}`;
 }
 
-// Function to fetch first available file if main file is missing
+// Function to fetch fallback file if main file is missing
 async function fetchFallbackFile(language, folderName, fileName) {
     const fileUrl = `https://api.github.com/repos/haoel/leetcode/contents/algorithms/${language}/${folderName}/${fileName}`;
-    
+    const GITHUB_TOKEN = await fetchGithubToken();
     try {
         const response = await fetch(fileUrl, {
             headers: {
